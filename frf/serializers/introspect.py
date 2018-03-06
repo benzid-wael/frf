@@ -55,6 +55,9 @@ def json_converter(field):
 def date_converter(field):
     return fields.DateField()
 
+def foreignkey_converter(field):
+    return fields.PrimaryKeyRelatedField
+
 
 CONVERTER_MAP = {
     models.String:        string_converter,
@@ -70,7 +73,8 @@ CONVERTER_MAP = {
     models.Float:         float_converter,
     models.JSON:          json_converter,
     models.JSONB:         json_converter,
-    }
+    models.ForeignKey:    foreignkey_converter,
+}
 
 
 def table_fields(serializer, model):

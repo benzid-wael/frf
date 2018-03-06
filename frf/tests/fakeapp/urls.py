@@ -22,11 +22,13 @@ from frf.tests.fakeapp import viewsets
 book_viewset = viewsets.BookViewSet()
 author_viewset = viewsets.AuthorViewSet()
 company_viewset = viewsets.CompanyViewSet()
+company_viewset_v2 = viewsets.CompanyViewSetV2()
 
 
 urlpatterns = [
     ('/companies/', company_viewset),
     ('/companies/{id}/', company_viewset),
+    ('/v2/companies/', company_viewset_v2),
     ('/books/', book_viewset),
     ('/books/{id}/', book_viewset),
     ('/authors/', author_viewset),

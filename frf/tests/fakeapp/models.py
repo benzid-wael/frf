@@ -28,6 +28,9 @@ class Company(models.Model):
 
     __tablename__ = 'company'
 
+    def __str__(self):
+        return self.name
+
 
 class Author(models.Model):
     uuid1 = models.Column(models.GUID, default=uuid.uuid4, primary_key=True)
@@ -41,6 +44,9 @@ class Author(models.Model):
         primaryjoin='Author.company_id==Company.id')
 
     __tablename__ = 'author'
+
+    def __str__(self):
+        return self.name
 
 
 class Book(models.Model):

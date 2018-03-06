@@ -31,6 +31,16 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'authors')
 
 
+class CompanySerializerV2(serializers.ModelSerializer):
+    authors = serializers.StringRelatedField(
+        model=models.Author, many=True,
+    )
+
+    class Meta:
+        model = models.Company
+        fields = ('id', 'name', 'authors')
+
+
 class AuthorSerializer(serializers.ModelSerializer):
     company = serializers.PrimaryKeyRelatedField(
         model=models.Company)
