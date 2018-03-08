@@ -167,7 +167,7 @@ class CreateModelMixin(CreateMixin):
 
         try:
             db.session.commit()
-        except:
+        except Exception:
             db.session.rollback()
             raise
 
@@ -178,7 +178,7 @@ class UpdateModelMixin(UpdateMixin):
     def update_save_obj(self, req, obj, **kwargs):
         try:
             db.session.commit()
-        except:
+        except Exception:
             db.session.rollback()
             raise
 
@@ -191,6 +191,6 @@ class DestroyModelMixin(DestroyMixin):
 
         try:
             db.session.commit()
-        except:
+        except Exception:
             db.session.rollback()
             raise

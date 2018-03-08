@@ -141,7 +141,7 @@ class RelatedField(Field):
         for item in value:
             if not isinstance(keys, (list, tuple)):
                 items.append(
-                    self.queryset.filter_by( **{keys: item}).first()
+                    self.queryset.filter_by(**{keys: item}).first()
                 )
             else:
                 if validate:
@@ -276,7 +276,7 @@ class PkOnlyRelatedField(RelatedField):
             raise exceptions.ValidationError(
                 self.MESSAGES['does_not_exist'], self.pk_field,
             )
-        elif not (pk_field.primary_key or pk_field.unique) :
+        elif not (pk_field.primary_key or pk_field.unique):
             raise exceptions.ValidationError(
                 self.MESSAGES['incorrect_type'], pk_field.type_.__name__,
             )
@@ -302,4 +302,3 @@ class HyperlinkedRelatedField(RelatedField):
     def _serialize_single_item(self, value):
         context = self.get_template_context(**value.__dict__)
         return self.template_uri.format(**context)
-

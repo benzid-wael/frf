@@ -22,6 +22,5 @@ from .fields import (  # noqa
     ISODateTimeField, SerializerField, ListField, UUIDField, JSONField,
     IntField,
 )
-from frf.exceptions import InvalidFieldException, ValidationError
-from .base import ModelSerializer, Serializer, SerializerObject
+from .base import ModelSerializer, Serializer, SerializerObject  # noqa
 from .relations import *  # noqa

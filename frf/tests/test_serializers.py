@@ -29,6 +29,7 @@ from frf.tests import fakeproject  # noqa
 from frf.tests.fakeapp import models
 from frf.utils import timezone
 from frf.utils.json import serialize
+from frf.exceptions import InvalidFieldException
 
 
 class DummySerializer(serializers.Serializer):
@@ -389,7 +390,7 @@ class TestCase(unittest.TestCase):
             context.exception.description['name'][0])
 
     def test_fail_invalid_field_needs_model_serializer(self):
-        with self.assertRaises(serializers.InvalidFieldException):
+        with self.assertRaises(InvalidFieldException):
             new_serializer_class(
                 field=serializers.PrimaryKeyRelatedField(
                     model=FakeModel()),)

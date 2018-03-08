@@ -21,7 +21,7 @@ import code
 
 try:
     import IPython
-except:
+except ImportError:
     IPython = None
 
 from frf.commands.base import BaseCommand
