@@ -283,11 +283,11 @@ class Serializer(object):
 
         return obj
 
-    def serialize(self, objs, many=False, ctx=None):
+    def serialize(self, data, many=False, ctx=None):
         """Serialize an object or objects.
 
         Args:
-            objs (object): The object or objects to serialize.
+            data (object): The object or objects to serialize.
             many (bool): Set to True if `objs` is a list of more than one
                 object.
 
@@ -298,11 +298,11 @@ class Serializer(object):
             ctx = {}
 
         if not many:
-            objs = [objs]
+            data = [data]
 
         serialized_objs = []
 
-        for obj in objs:
+        for obj in data:
             serialized_obj = {}
             for field_name, field in self.fields.items():
                 source_name = field.source

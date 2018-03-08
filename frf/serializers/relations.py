@@ -245,3 +245,61 @@ class PrimaryKeyRelatedField(RelatedField):
     pass
 
 
+class PkOnlyRelatedField(RelatedField):
+    MESSAGES = {
+        'required': _('This field is required.'),
+        'does_not_exist': _(
+            'Invalid pk "{pk_value}" - object does not exist.',
+        ),
+        'incorrect_type': _(
+            'Incorrect type. Expected pk value, received {data_type}.',
+        ),
+    }
+
+    def __init__(self, **kwargs):
+        self.pk_field = kwargs.pop('pk_field', None)
+        if not self.pk_field:
+            raise exceptions.ValidationError(self.MESSAGES['required'])
+        self.validate_primary_key()
+        super(PkOnlyRelatedField, self).__init__(**kwargs)
+
+    def validate_primary_key(self):
+        mapper = self.model.__mapper__
+        pk_field = [
+            mapper.get_property_by_column(column).key
+            for column in mapper.columns
+        ]
+        if pk_field:
+            pk_field = pk_field[0]
+
+        if not pk_field:
+            raise exceptions.ValidationError(
+                self.MESSAGES['does_not_exist'], self.pk_field,
+            )
+        elif not (pk_field.primary_key or pk_field.unique) :
+            raise exceptions.ValidationError(
+                self.MESSAGES['incorrect_type'], pk_field.type_.__name__,
+            )
+
+    def get_primary_keys(self):
+        self.validate_primary_key()
+        return self.pk_field
+
+
+class HyperlinkedRelatedField(RelatedField):
+
+    def __init__(self, template_uri, context=None, **kwargs):
+        self.template_uri = template_uri
+        self.context = context or {}
+        kwargs['read_only'] = True
+        super(HyperlinkedRelatedField, self).__init__(**kwargs)
+
+    def get_template_context(self, **kwargs):
+        context = self.context.copy()
+        context.update(kwargs)
+        return context
+
+    def _serialize_single_item(self, value):
+        context = self.get_template_context(**value.__dict__)
+        return self.template_uri.format(**context)
+

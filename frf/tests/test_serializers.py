@@ -434,13 +434,12 @@ class FakeProjectTestCase(BaseTestCase):
 
         db.session.commit()
 
-    def test_index_companies(self):
+    def test_index_companies_using_pk_related_field(self):
         res = self.simulate_get('/api/companies/')
         self.assertEqual(falcon.HTTP_200, res.status)
 
         json = res.json
         self.assertEqual(1, len(json))
-        print(json)
         company = json[0]
 
         self.assertEqual(3, len(company))
@@ -458,7 +457,7 @@ class FakeProjectTestCase(BaseTestCase):
         self.assertEquals(company['authors'][1]['uuid1'], str(self.ross.uuid1))
         self.assertEquals(company['authors'][1]['uuid2'], str(self.ross.uuid2))
 
-    def test_index_companies_v2(self):
+    def test_index_companies_using_string_related_field(self):
         res = self.simulate_get('/api/v2/companies/')
         self.assertEqual(falcon.HTTP_200, res.status)
 
@@ -475,6 +474,47 @@ class FakeProjectTestCase(BaseTestCase):
         self.assertEquals(2, len(company['authors']))
         self.assertEquals(self.adam.name, company['authors'][0])
         self.assertEquals(self.ross.name, company['authors'][1])
+
+    def test_index_companies_using_hyperlinked_related_field(self):
+        res = self.simulate_get('/api/v3/companies/')
+        self.assertEqual(falcon.HTTP_200, res.status)
+
+        json = res.json
+        self.assertEqual(1, len(json))
+
+        company = json[0]
+        self.assertEqual(3, len(company))
+
+        self.assertIsInstance(company['authors'], list)
+        self.assertIsInstance(company['id'], int)
+        self.assertIsInstance(company['name'], str)
+
+        self.assertEquals(2, len(company['authors']))
+        template_uri = '/api/v1/authors/{}'
+        expected = (
+            template_uri.format(self.adam.uuid1),
+            template_uri.format(self.ross.uuid1),
+        )
+        self.assertEquals(expected[0], company['authors'][0])
+        self.assertEquals(expected[1], company['authors'][1])
+
+    def test_index_companies_using_serializer_related_field(self):
+        res = self.simulate_get('/api/v4/companies/')
+        self.assertEqual(falcon.HTTP_200, res.status)
+
+        json = res.json
+        self.assertEqual(1, len(json))
+
+        company = json[0]
+        self.assertEqual(3, len(company))
+
+        self.assertIsInstance(company['authors'], list)
+        self.assertIsInstance(company['id'], int)
+        self.assertIsInstance(company['name'], str)
+
+        self.assertEquals(2, len(company['authors']))
+        self.assertIsInstance(company['authors'][0], dict)
+        self.assertIsInstance(company['authors'][1], dict)
 
     def test_update_company(self):
         c = models.Company(name='SOC')

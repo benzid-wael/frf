@@ -41,6 +41,17 @@ class CompanySerializerV2(serializers.ModelSerializer):
         fields = ('id', 'name', 'authors')
 
 
+class CompanySerializerV3(serializers.ModelSerializer):
+    authors = serializers.HyperlinkedRelatedField(
+        model=models.Author, many=True,
+        template_uri='/api/v1/authors/{uuid1}',
+    )
+
+    class Meta:
+        model = models.Company
+        fields = ('id', 'name', 'authors')
+
+
 class AuthorSerializer(serializers.ModelSerializer):
     company = serializers.PrimaryKeyRelatedField(
         model=models.Company)
@@ -50,6 +61,17 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('uuid1', 'uuid2', 'name', 'company', 'books')
         model = models.Author
+
+
+class CompanySerializerV4(serializers.ModelSerializer):
+    authors = serializers.SerializerField(
+        serializer=AuthorSerializer,
+        many=True,
+    )
+
+    class Meta:
+        model = models.Company
+        fields = ('id', 'name', 'authors')
 
 
 class BookSerialzier(serializers.ModelSerializer):

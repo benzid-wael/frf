@@ -21,14 +21,22 @@ from frf.tests.fakeapp import viewsets
 
 book_viewset = viewsets.BookViewSet()
 author_viewset = viewsets.AuthorViewSet()
+# 1st version using PrimaryKeyRelatedField
 company_viewset = viewsets.CompanyViewSet()
+# 2nd version using StringRelatedField
 company_viewset_v2 = viewsets.CompanyViewSetV2()
+# 3rd version using HyperlinkedRelateField
+company_viewset_v3 = viewsets.CompanyViewSetV3()
+# 4th version using SerializerField
+company_viewset_v4 = viewsets.CompanyViewSetV4()
 
 
 urlpatterns = [
     ('/companies/', company_viewset),
     ('/companies/{id}/', company_viewset),
     ('/v2/companies/', company_viewset_v2),
+    ('/v3/companies/', company_viewset_v3),
+    ('/v4/companies/', company_viewset_v4),
     ('/books/', book_viewset),
     ('/books/{id}/', book_viewset),
     ('/authors/', author_viewset),

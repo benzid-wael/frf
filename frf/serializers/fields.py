@@ -18,13 +18,13 @@
 # above.
 
 import datetime
-from gettext import gettext as _
+import dateutil.parser
+import inspect
 import json
 import re
 import uuid
 
-import dateutil.parser
-
+from gettext import gettext as _
 
 from frf import exceptions
 from frf.utils.json import deserialize
@@ -565,7 +565,11 @@ class SerializerField(Field):
             many (bool): Set to ``True`` if this should be a list of objects,
                 instead of just a single object.
         """
-        self.serializer = serializer
+        if inspect.isclass(serializer):
+            self.serializer = serializer()
+        else:
+            self.serializer = serializer
+
         self.many = many
         super().__init__(**kwargs)
 

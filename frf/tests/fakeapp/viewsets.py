@@ -33,6 +33,18 @@ class CompanyViewSetV2(viewsets.ModelViewSet):
     serializer = serializers.CompanySerializerV2()
 
 
+class CompanyViewSetV3(viewsets.ModelViewSet):
+    obj_lookup_kwarg = 'id'
+    model = models.Company
+    serializer = serializers.CompanySerializerV3()
+
+
+class CompanyViewSetV4(viewsets.ModelViewSet):
+    obj_lookup_kwarg = 'id'
+    model = models.Company
+    serializer = serializers.CompanySerializerV4()
+
+
 class AuthorViewSet(viewsets.ModelViewSet):
     model = models.Author
     serializer = serializers.AuthorSerializer()
