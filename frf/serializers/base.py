@@ -101,11 +101,9 @@ class Serializer(object):
                     raise InvalidFieldException(_(
                         'The field {field} requires a ModelSerializer'.format(
                             field=attr_name)))
-                attr.field_name = attr_name
-                attr._serializer = self
 
-                if attr.source is None:
-                    attr.source = attr_name
+                # bind the current field to his parent serializer
+                attr.bind(attr_name, self)
 
                 if attr.source in field_source_map:
                     name = field_source_map[attr.source]
