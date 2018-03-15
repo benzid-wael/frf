@@ -20,7 +20,7 @@
 from .fields import (  # noqa
     Field, StringField, EmailField, BooleanField,
     ISODateTimeField, SerializerField, ListField, UUIDField, JSONField,
-    IntField,
+    IntField, MethodField,
 )
 from .base import ModelSerializer, Serializer, SerializerObject  # noqa
 from .relations import *  # noqa

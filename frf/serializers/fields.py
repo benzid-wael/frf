@@ -145,6 +145,26 @@ class Field(object):
 
         return errors
 
+    @property
+    def parent(self):
+        return self._serializer
+
+    @parent.setter
+    def parent(self, value):
+        self._serializer = value
+
+    def bind(self, field_name, serializer):
+        """
+        Initializes the field name and bind the instance to it parent
+        serializer. Called when a field is added to the parent serializer
+        instance.
+        """
+        self.field_name = field_name
+        self.parent = serializer
+
+        if self.source is None:
+            self.source = field_name
+
     def to_python(self, obj, data, value, ctx=None):
         return value
 
@@ -824,3 +844,51 @@ class PrimaryKeyRelatedField(Field):
             raise exceptions.ValidationError(
                 _('A row with the key "{key}" does'
                   ' not exist in the database.'.format(key=keys)))
+
+
+class MethodField(Field):
+
+    def __init__(self, method_name=None, **kwargs):
+        if not (method_name and isinstance(method_name, str)):
+            raise ValueError('{} field should be initialized by t')
+        self.method_name = method_name
+        self._method = None
+        kwargs['read_only'] = True
+        super(MethodField, self).__init__(**kwargs)
+
+    def bind(self, field_name, serializer):
+        super(MethodField, self).bind(field_name, serializer)
+
+        default_method_name = 'get_{}'.format(field_name)
+        assert default_method_name != self.method_name, (
+            'It is redundant to set `method_name={} on field {} of {} '
+            'serializer, because it\'s the same as the field method '
+            'name.'.format(
+                self.method_name,
+                serializer.__class__.__name__,
+                field_name,
+            )
+        )
+
+        if not self.method_name:
+            self.method_name = default_method_name
+
+        self._method = getattr(serializer, self.method_name, None)
+        if not self._method:
+            raise ValueError(
+                'Serializer `{}` doesn\'t have method called: {}'.format(
+                    serializer.__class__.__name__,
+                    self.method_name,
+                )
+            )
+        elif not callable(self._method):
+            raise TypeError(
+                'Expected `{}` to be a method of serializer `{}`, not a '
+                'property or attribute.'.format(
+                    self.method_name,
+                    serializer.__class__.__name__,
+                )
+            )
+
+    def to_data(self, obj, value, ctx=None):
+        return self._method(obj, value, ctx=ctx)
